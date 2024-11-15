@@ -10,6 +10,7 @@ import warnings
 warnings.filterwarnings("ignore", category=UserWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 
+
 def get_content(book: EpubBook, documents: list[str]) -> str:
     join_content = ""
     for ref in documents:
@@ -33,7 +34,12 @@ def main():
         required=False,
     )
     parser.add_argument(
-        "-l", "--limit", type=int, help="Words limit of each chapter", required=False, default=300
+        "-l",
+        "--limit",
+        type=int,
+        help="Words limit of each chapter",
+        required=False,
+        default=300,
     )
     args = parser.parse_args()
     epub_path = args.epub
