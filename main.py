@@ -5,7 +5,10 @@ from ebooklib import epub, ITEM_DOCUMENT, ITEM_NAVIGATION
 from ebooklib.epub import EpubBook, EpubHtml
 import json
 import trafilatura
+import warnings
 
+warnings.filterwarnings("ignore", category=UserWarning)
+warnings.filterwarnings("ignore", category=FutureWarning)
 
 def get_content(book: EpubBook, documents: list[str]) -> str:
     join_content = ""
@@ -23,8 +26,8 @@ def main():
     parser = ArgumentParser()
     parser.add_argument("epub", type=Path, help="Path to epub file")
     parser.add_argument(
-        "--output",
         "-o",
+        "--output",
         type=Path,
         help="Path to output file. If not provided, output will be printed to stdout",
         required=False,
@@ -81,8 +84,8 @@ def main():
     for name, content in zip(chapter_names, summarized_chapters):
         summary += f"## {name}\n\n{content}\n\n"
 
-    if parser.output is not None:
-        with open(parser.output, "w") as f:
+    if args.output is not None:
+        with open(args.output, "w") as f:
             f.write(summary)
     else:
         print("--------------------")
