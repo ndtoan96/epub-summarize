@@ -10,8 +10,7 @@ dependencies = [
     "haystack-ai>=2.7.0",
     "trafilatura>=1.12.2",
 ]
+scripts = { "summarize" = "main:main" }
 
 [tool.uv]
-dev-dependencies = [
-    "ipykernel>=6.29.5",
-]
+dev-dependencies = ["ipykernel>=6.29.5"]
