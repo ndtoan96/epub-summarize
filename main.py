@@ -32,21 +32,27 @@ def main():
         help="Path to output file. If not provided, output will be printed to stdout",
         required=False,
     )
+    parser.add_argument(
+        "-l", "--limit", type=int, help="Words limit of each chapter", required=False, default=300
+    )
     args = parser.parse_args()
     epub_path = args.epub
 
     # these imports are slow, only run them after argument parsing in case user only runs help
+    logging.info("Importing dependencies")
     from haystack_integrations.components.generators.google_ai import (
         GoogleAIGeminiGenerator,
     )
 
     llm = GoogleAIGeminiGenerator(model="gemini-1.5-flash")
 
+    logging.info("Reading epub file")
     book = epub.read_epub(epub_path)
     id2doc = {doc.get_id(): doc for doc in book.get_items_of_type(ITEM_DOCUMENT)}
     ordered_items = [id2doc[x[0]] for x in book.spine]
     nav = next(book.get_items_of_type(ITEM_NAVIGATION))
 
+    logging.info("Extracting chapters")
     extract_chapters_prompt = f"""
     Given an ebook about a story.
 
@@ -74,7 +80,7 @@ def main():
         logging.info(f"Summarizing chapter '{name}'")
         res = llm.run(
             parts=[
-                "Below is a chapter from a story, summarize it in up to 500 words.\n\n"
+                f"Below is a chapter from a story, summarize it in up to {args.limit} words.\n\n"
                 + c
             ]
         )
