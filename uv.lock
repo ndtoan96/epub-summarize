@@ -1355,6 +1355,7 @@ source = { virtual = "." }
 dependencies = [
     { name = "ebooklib" },
     { name = "google-ai-haystack" },
+    { name = "google-generativeai" },
     { name = "haystack-ai" },
     { name = "trafilatura" },
 ]
@@ -1368,6 +1369,7 @@ dev = [
 requires-dist = [
     { name = "ebooklib", specifier = ">=0.18" },
     { name = "google-ai-haystack", specifier = ">=3.0.0" },
+    { name = "google-generativeai", specifier = ">=0.8.3" },
     { name = "haystack-ai", specifier = ">=2.7.0" },
     { name = "trafilatura", specifier = ">=1.12.2" },
 ]

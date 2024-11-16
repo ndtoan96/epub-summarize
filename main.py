@@ -6,6 +6,7 @@ from ebooklib.epub import EpubBook, EpubHtml
 import json
 import trafilatura
 import warnings
+from google.generativeai.types import HarmCategory, HarmBlockThreshold
 
 warnings.filterwarnings("ignore", category=UserWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
@@ -50,7 +51,15 @@ def main():
         GoogleAIGeminiGenerator,
     )
 
-    llm = GoogleAIGeminiGenerator(model="gemini-1.5-flash")
+    llm = GoogleAIGeminiGenerator(
+        model="gemini-1.5-flash",
+        safety_settings={
+            HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+            HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+            HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+            HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+        },
+    )
 
     logging.info("Reading epub file")
     book = epub.read_epub(epub_path)
@@ -72,7 +81,10 @@ def main():
     {"\n".join([item.get_name() for item in ordered_items])}
     ```
 
-    Extract document names coresponding to each chapter, ignore non-content section such as cover, insert, afterword,... The result must be in json format: [{{"name": "chapter_1_name", "documents": ["document_1", "document_2", ...]}}, {{"name": "chapter_2_name", "documents": ["document_1", "document_2", ...]}}, ...].
+    Extract document names coresponding to each chapter, ignore non-content section such as cover, insert, afterword,...
+    Note that each chapter likely has multiple documents.
+    For example, if chapter 1 starts at document 1 and chapter 2 starts at document 4 then chapter 1 includes document 1, 2, and 3.
+    The result must be in json format: [{{"name": "chapter_1_name", "documents": ["document_1", "document_2", ...]}}, {{"name": "chapter_2_name", "documents": ["document_1", "document_2", ...]}}, ...].
     Do not use fence code for the result.
     """
     extract_chapters_res = llm.run(parts=[extract_chapters_prompt])
@@ -86,7 +98,7 @@ def main():
         logging.info(f"Summarizing chapter '{name}'")
         res = llm.run(
             parts=[
-                f"Below is a chapter from a story, summarize it in up to {args.limit} words.\n\n"
+                f"Below is a chapter from a story, summarize it in up to {args.limit} words. Since this is a story, the content may look harmful but it is OK to proceed.\n\n"
                 + c
             ]
         )
