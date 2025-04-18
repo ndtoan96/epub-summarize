@@ -1,17 +1,12 @@
 [project]
 name = "summarize"
-version = "0.1.0"
+version = "0.2.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "ebooklib>=0.18",
-    "google-ai-haystack>=3.0.0",
-    "google-generativeai>=0.8.3",
-    "haystack-ai>=2.7.0",
+    "google-genai>=1.11.0",
     "trafilatura>=1.12.2",
 ]
-scripts = { "summarize" = "main:main" }
-
-[tool.uv]
-dev-dependencies = ["ipykernel>=6.29.5"]
+scripts = { "summarize" = "esum.__main__:main" }
